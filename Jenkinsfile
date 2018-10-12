@@ -15,6 +15,7 @@ pipeline {
         stage('Unit tests') {
             steps {
                 echo "-=- execute unit tests -=-"
+                sh "python -m unittest discover -v"
                 //sh "mvn test"
                 //junit 'target/surefire-reports/*.xml'
                 //jacoco execPattern: 'target/jacoco.exec'
