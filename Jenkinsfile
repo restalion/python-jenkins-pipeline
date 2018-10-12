@@ -6,7 +6,7 @@ pipeline {
         //docker {
         //    image 'python:3.7' 
         //    args '--network ci --mount type=volume,source=ci-maven-home,target=/root/.m2'
-        //}
+        }
     }
 
     stages {
