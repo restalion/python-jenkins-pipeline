@@ -1,5 +1,5 @@
 import unittest
-from basicfunction import BasicFunction
+from main.basicfunction import BasicFunction
  
 class TestBasicFunction(unittest.TestCase):
     def setUp(self):
