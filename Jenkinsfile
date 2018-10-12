@@ -3,17 +3,11 @@
 pipeline {
     agent any
 
-    pre {
-        always {
-            echo "-=- check python version -=-"
-            sh "python --version"
-        }
-    }
-
     stages {
         stage('Compile') {
             steps {
                 echo "-=- compiling project -=-"
+                sh "python --version"
                 sh "python -m compileall ."
             }
         }
