@@ -7,15 +7,15 @@ pipeline {
         stage('Compile') {
             steps {
                 echo "-=- compiling project -=-"
-                sh "python --version"
-                sh "python -m compileall ."
+                sh "python3 --version"
+                sh "python3 -m compileall ."
             }
         }
 
         stage('Unit tests') {
             steps {
                 echo "-=- execute unit tests -=-"
-                sh "python -m unittest discover -v"
+                sh "python3 -m unittest discover -v"
                 //sh "mvn test"
                 //junit 'target/surefire-reports/*.xml'
                 //jacoco execPattern: 'target/jacoco.exec'
@@ -30,7 +30,7 @@ pipeline {
                 // execute mutation tests
                 sh "cosmic-ray exec my_session"
                 // get mutation test results
-                sh "cosmic-ray dump  my_session | cr-report"
+                sh "cosmic-ray dump  my_session | cr-report"    
             }
         }
 
