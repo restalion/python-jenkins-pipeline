@@ -1,0 +1,12 @@
+module: main
+
+baseline: 10
+
+exclude-modules:
+
+test-runner:
+  name: unittest
+  args: test
+
+execution-engine:
+  name: local
