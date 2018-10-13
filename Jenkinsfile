@@ -25,7 +25,12 @@ pipeline {
         stage('Mutation tests') {
             steps {
                 echo "-=- execute mutation tests -=-"
-                //sh "mvn org.pitest:pitest-maven:mutationCoverage"
+                // initialize mutation testing session
+                sh "cosmic-ray init config.yml my_session"
+                // execute mutation tests
+                sh "cosmic-ray exec my_session"
+                // get mutation test results
+                sh "cosmic-ray dump  my_session | cr-report"
             }
         }
 
