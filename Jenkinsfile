@@ -3,7 +3,7 @@
 pipeline {
     agent {
         docker {
-            image 'python-jenkins-docker:0.1'
+            image 'python-jenkins-docker:0.2'
         }
     }
 
