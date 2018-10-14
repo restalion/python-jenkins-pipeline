@@ -30,11 +30,7 @@ pipeline {
             steps {
                 echo "-=- execute mutation tests -=-"
                 // initialize mutation testing session
-                sh "cosmic-ray init config.yml my_session"
-                // execute mutation tests
-                sh "cosmic-ray exec my_session"
-                // get mutation test results
-                sh "cosmic-ray dump  my_session | cr-report"    
+                sh "cosmic-ray init config.yml jenkins_session && cosmic-ray --verbose exec jenkins_session && cosmic-ray dump jenkins_session | cr-report"    
             }
         }
 
