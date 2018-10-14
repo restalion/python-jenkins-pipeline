@@ -3,7 +3,7 @@
 pipeline {
     agent {
         docker {
-            image 'restalion/python-jenkins-docker:0.2'
+            image 'restalion/custom-python-jenkins-docker:0.1'
         }
     }
 
