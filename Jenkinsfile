@@ -3,11 +3,19 @@
 pipeline {
     agent {
         docker {
-            image 'restalion/pyhton-jenkins-docker:0.3'
+            image 'pyhton:3.7'
         }
     }
 
     stages {
+        stage('Environment preparation') {
+            steps {
+                echo "-=- preparing project environment -=-"
+                sh "pip install Flask"
+                sh "pip install Flask_Script"
+                sh "pip install cosmic_ray"
+            }
+        }
         stage('Compile') {
             steps {
                 echo "-=- compiling project -=-"
