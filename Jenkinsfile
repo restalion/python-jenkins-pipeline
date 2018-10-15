@@ -109,7 +109,7 @@ pipeline {
     post {
         always {
             echo "-=- remove deployment -=-"
-            //sh "docker stop ci-deors-demos-petclinic"
+            sh "docker stop python-jenkins-pipeline"
         }
     }
 }
