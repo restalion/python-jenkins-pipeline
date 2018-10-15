@@ -5,7 +5,7 @@ baseline: 10
 exclude-modules:
 
 test-runner:
-  name: nose
+  name: cosmic_ray_nose_runner
   args: test
 
 execution-engine:
