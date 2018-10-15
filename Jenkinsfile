@@ -14,20 +14,22 @@ pipeline {
                 sh "pip install Flask"
                 sh "pip install Flask_Script"
                 sh "pip install cosmic_ray"
+                sh "pip install nose"
             }
         }
         stage('Compile') {
             steps {
                 echo "-=- compiling project -=-"
-                sh "python3 --version"
-                sh "python3 -m compileall ."
+                sh "python --version"
+                sh "python -m compileall ."
             }
         }
 
         stage('Unit tests') {
             steps {
                 echo "-=- execute unit tests -=-"
-                sh "python3 -m unittest discover -v"
+                sh "nosetests --exe"
+                //sh "python3 -m unittest discover -v"
                 //sh "mvn test"
                 //junit 'target/surefire-reports/*.xml'
                 //jacoco execPattern: 'target/jacoco.exec'
