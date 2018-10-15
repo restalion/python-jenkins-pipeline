@@ -5,7 +5,7 @@ baseline: 10
 exclude-modules:
 
 test-runner:
-  name: cosmic_ray_nose_runner
+  name: unittest
   args: test
 
 execution-engine:
