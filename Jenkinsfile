@@ -57,15 +57,13 @@ pipeline {
             steps {
                 echo "-=- build Docker image -=-"
                 sh "docker build -t python-jenkins-pipeline:0.1 ."
-                
-                
             }
         }
 
         stage('Run Docker image') {
             steps {
                 echo "-=- run Docker image -=-"
-                //sh "docker run --name ci-deors-demos-petclinic --detach --rm --network ci deors/deors-demos-petclinic:latest"
+                sh "docker run --name python-jenkins-pipeline --detach --rm --network ci python-jenkins-pipeline:0.1"
             }
         }
 

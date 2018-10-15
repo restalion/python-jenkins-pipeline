@@ -5,12 +5,12 @@ RUN mkdir hello
 COPY . /hello
 WORKDIR /hello
 
-RUN python --version
-RUN python3 --version
-
 # install required libraries
 RUN pip install Flask
 RUN pip install Flask_Script
 
+RUN pip list
+
 ENTRYPOINT ["python"]
-CMD ["/hello/run.py"]
+CMD ["run.py"]
+EXPOSE 5000
