@@ -15,6 +15,7 @@ pipeline {
                 sh "pip install Flask_Script"
                 sh "pip install cosmic_ray"
                 sh "pip install nose"
+                sh "pip install pyinstaller"
             }
         }
         stage('Compile') {
@@ -40,8 +41,6 @@ pipeline {
             steps {
                 echo "-=- execute mutation tests -=-"
                 // initialize mutation testing session
-                sh "pwd"
-                sh "ls -la"
                 sh "cosmic-ray init config.yml jenkins_session && cosmic-ray --verbose exec jenkins_session && cosmic-ray dump jenkins_session | cr-report"    
             }
         }
@@ -57,7 +56,9 @@ pipeline {
         stage('Build Docker image') {
             steps {
                 echo "-=- build Docker image -=-"
-                //sh "mvn docker:build"
+                sh "docker build -t python-jenkins-pipeline:0.1 ."
+                
+                
             }
         }
 
