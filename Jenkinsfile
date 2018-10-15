@@ -28,7 +28,7 @@ pipeline {
         stage('Unit tests') {
             steps {
                 echo "-=- execute unit tests -=-"
-                sh "nosetests --exe"
+                sh "nosetests -v test"
                 //sh "python3 -m unittest discover -v"
                 //sh "mvn test"
                 //junit 'target/surefire-reports/*.xml'
