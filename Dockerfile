@@ -11,4 +11,4 @@ RUN pip install Flask_Script
 
 EXPOSE 5000
 
-CMD ["nohup","python", "run.py","&"]
+CMD ["python", "run.py"]

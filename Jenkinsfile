@@ -11,6 +11,9 @@ pipeline {
         stage('Environment preparation') {
             steps {
                 echo "-=- preparing project environment -=-"
+                // check python version
+                sh "python --version"
+                // Python dependencies
                 sh "pip install Flask"
                 sh "pip install Flask_Script"
                 sh "pip install cosmic_ray"
@@ -21,7 +24,6 @@ pipeline {
         stage('Compile') {
             steps {
                 echo "-=- compiling project -=-"
-                sh "python --version"
                 sh "python -m compileall ."
             }
         }
