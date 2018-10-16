@@ -9,8 +9,6 @@ WORKDIR /hello
 RUN pip install Flask
 RUN pip install Flask_Script
 
-RUN pip list
-
-ENTRYPOINT ["python"]
-CMD ["run.py"]
 EXPOSE 5000
+
+CMD ["nohup","python", "run.py","&"]
