@@ -9,4 +9,3 @@ class IntegrationTest(unittest.TestCase):
         tester = app.test_client(self)
         response = tester.get('/auth/hello', content_type='html/text')
         self.assertEqual(response.status_code, 200)
-        self.assertEqual(response.content_length, 13)
