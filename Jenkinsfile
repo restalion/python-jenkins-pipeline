@@ -72,6 +72,7 @@ pipeline {
         stage('Integration tests') {
             steps {
                 echo "-=- execute integration tests -=-"
+                sh "nosetests -v int_test"
                 //sh "mvn failsafe:integration-test failsafe:verify -DargLine=\"-Dtest.selenium.hub.url=http://selenium-hub:4444/wd/hub -Dtest.target.server.url=http://ci-deors-demos-petclinic:8080/petclinic\""
                 //junit 'target/failsafe-reports/*.xml'
             }
