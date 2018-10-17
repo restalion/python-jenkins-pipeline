@@ -18,7 +18,7 @@ pipeline {
                 sh "pip install Flask_Script"
                 sh "pip install cosmic_ray"
                 sh "pip install nose"
-                sh "pip install pyinstaller"
+                sh "pip install locustio"
             }
         }
         stage('Compile') {
@@ -81,6 +81,7 @@ pipeline {
         stage('Performance tests') {
             steps {
                 echo "-=- execute performance tests -=-"
+                sh "locust -f ./perf_test/locusfile.py"
                 //sh "mvn jmeter:jmeter jmeter:results -Djmeter.target.host=ci-deors-demos-petclinic -Djmeter.target.port=8080 -Djmeter.target.root=petclinic"
                 //perfReport sourceDataFiles: 'target/jmeter/results/petclinic.csv', errorUnstableThreshold: 0, errorFailedThreshold: 5, errorUnstableResponseTimeThreshold: 'petclinic.jtl:100'
             }
