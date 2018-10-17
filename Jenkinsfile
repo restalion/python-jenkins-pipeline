@@ -11,14 +11,8 @@ pipeline {
         stage('Environment preparation') {
             steps {
                 echo "-=- preparing project environment -=-"
-                // check python version
-                sh "python --version"
                 // Python dependencies
-                sh "pip install Flask"
-                sh "pip install Flask_Script"
-                sh "pip install cosmic_ray"
-                sh "pip install nose"
-                sh "pip install locustio"
+                sh "pip install -r requirements.txt"
             }
         }
         stage('Compile') {
@@ -90,6 +84,7 @@ pipeline {
         stage('Dependency vulnerability tests') {
             steps {
                 echo "-=- run dependency vulnerability tests -=-"
+                sh "safety check r requirements.txt"
                 //sh "mvn dependency-check:check"
                 //dependencyCheckPublisher failedTotalHigh: '30', unstableTotalHigh: '25', failedTotalNormal: '110', unstableTotalNormal: '100'
             }
