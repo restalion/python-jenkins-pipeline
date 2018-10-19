@@ -25,5 +25,6 @@ class TestBasicFunction(unittest.TestCase):
         self.func.clear_state()
         self.assertEqual(self.func.state, 0)
 
+
 if __name__ == '__main__':
     unittest.main()
