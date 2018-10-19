@@ -102,7 +102,7 @@ pipeline {
         stage('Push Docker image') {
             steps {
                 echo "-=- push Docker image -=-"
-                withDockerRegistry([ credentialsId: "swasd", url: "https://hub.docker.com" ]) {
+                withDockerRegistry([ credentialsId: "swasd" ]) {
                     sh "docker push restalion/python-jenkins-pipeline:0.1"
                 }
                 
