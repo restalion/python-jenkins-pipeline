@@ -1,10 +1,8 @@
 import unittest
-import os
 
 from app import app
 
 class IntegrationTest(unittest.TestCase):
-
     def test_function(self):
         tester = app.test_client(self)
         print(tester.environ_base)
