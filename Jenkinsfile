@@ -76,7 +76,7 @@ pipeline {
             steps {
                 echo "-=- execute performance tests -=-"
                 sh "docker ps"
-                sh "locust -f ./perf_test/locustfile.py --no-web -c 1000 -r 100 --run-time 1m -H http://localhost:5001"
+                //sh "locust -f ./perf_test/locustfile.py --no-web -c 1000 -r 100 --run-time 1m -H http://localhost:5001"
                 //sh "mvn jmeter:jmeter jmeter:results -Djmeter.target.host=ci-deors-demos-petclinic -Djmeter.target.port=8080 -Djmeter.target.root=petclinic"
                 //perfReport sourceDataFiles: 'target/jmeter/results/petclinic.csv', errorUnstableThreshold: 0, errorFailedThreshold: 5, errorUnstableResponseTimeThreshold: 'petclinic.jtl:100'
             }
@@ -94,6 +94,7 @@ pipeline {
         stage('Code inspection & quality gate') {
             steps {
                 echo "-=- run code inspection & quality gate -=-"
+                sh "pylama"
                 //sh "mvn sonar:sonar -Dsonar.host.url=http://ci-sonarqube:9000/sonarqube"
             }
         }
@@ -101,6 +102,7 @@ pipeline {
         stage('Push Docker image') {
             steps {
                 echo "-=- push Docker image -=-"
+                sh "docker push"
                 //sh "mvn docker:push"
             }
         }
