@@ -26,10 +26,6 @@ pipeline {
             steps {
                 echo "-=- execute unit tests -=-"
                 sh "nosetests -v test"
-                //sh "python3 -m unittest discover -v"
-                //sh "mvn test"
-                //junit 'target/surefire-reports/*.xml'
-                //jacoco execPattern: 'target/jacoco.exec'
             }
         }
 
@@ -44,8 +40,7 @@ pipeline {
         stage('Package') {
             steps {
                 echo "-=- packaging project -=-"
-                //sh "mvn package -DskipUTs=true"
-                //archiveArtifacts artifacts: 'target/*.war', fingerprint: true
+                echo "No packaging phase for python projects ..."
             }
         }
 
@@ -67,8 +62,6 @@ pipeline {
             steps {
                 echo "-=- execute integration tests -=-"
                 sh "nosetests -v int_test"
-                //sh "mvn failsafe:integration-test failsafe:verify -DargLine=\"-Dtest.selenium.hub.url=http://selenium-hub:4444/wd/hub -Dtest.target.server.url=http://ci-deors-demos-petclinic:8080/petclinic\""
-                //junit 'target/failsafe-reports/*.xml'
             }
         }
 
@@ -76,9 +69,7 @@ pipeline {
             steps {
                 echo "-=- execute performance tests -=-"
                 sh "docker ps"
-                //sh "locust -f ./perf_test/locustfile.py --no-web -c 1000 -r 100 --run-time 1m -H http://localhost:5001"
-                //sh "mvn jmeter:jmeter jmeter:results -Djmeter.target.host=ci-deors-demos-petclinic -Djmeter.target.port=8080 -Djmeter.target.root=petclinic"
-                //perfReport sourceDataFiles: 'target/jmeter/results/petclinic.csv', errorUnstableThreshold: 0, errorFailedThreshold: 5, errorUnstableResponseTimeThreshold: 'petclinic.jtl:100'
+                sh "locust -f ./perf_test/locustfile.py --no-web -c 1000 -r 100 --run-time 1m -H http://127.0.0.1:5001"
             }
         }
 
@@ -86,8 +77,6 @@ pipeline {
             steps {
                 echo "-=- run dependency vulnerability tests -=-"
                 sh "safety check"
-                //sh "mvn dependency-check:check"
-                //dependencyCheckPublisher failedTotalHigh: '30', unstableTotalHigh: '25', failedTotalNormal: '110', unstableTotalNormal: '100'
             }
         }
 
@@ -95,14 +84,13 @@ pipeline {
             steps {
                 echo "-=- run code inspection & quality gate -=-"
                 sh "pylama"
-                //sh "mvn sonar:sonar -Dsonar.host.url=http://ci-sonarqube:9000/sonarqube"
             }
         }
 
         stage('Push Docker image') {
             steps {
                 echo "-=- push Docker image -=-"
-                withDockerRegistry([ credentialsId: "werdar-wedartg-uiny67-adsuja0-12njkn3", url: "" ]) {
+                withDockerRegistry([ credentialsId: "werdar-wedartg-uiny67-adsuja0-12njkn3pi", url: "" ]) {
                     sh "docker push restalion/python-jenkins-pipeline:0.1"
                 }
                 
