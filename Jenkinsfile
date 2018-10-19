@@ -59,7 +59,7 @@ pipeline {
         stage('Run Docker image') {
             steps {
                 echo "-=- run Docker image -=-"
-                sh "docker run --name python-jenkins-pipeline --detach --rm --network ci python-jenkins-pipeline:0.1"
+                sh "docker run --name python-jenkins-pipeline --detach --rm --network ci -p 5001:5000 python-jenkins-pipeline:0.1"
             }
         }
 
@@ -76,7 +76,7 @@ pipeline {
             steps {
                 echo "-=- execute performance tests -=-"
                 sh "docker ps"
-                sh "locust -f ./perf_test/locustfile.py --no-web -c 1000 -r 100 --run-time 1m -H http://localhost:5000"
+                sh "locust -f ./perf_test/locustfile.py --no-web -c 1000 -r 100 --run-time 1m -H http://localhost:5001"
                 //sh "mvn jmeter:jmeter jmeter:results -Djmeter.target.host=ci-deors-demos-petclinic -Djmeter.target.port=8080 -Djmeter.target.root=petclinic"
                 //perfReport sourceDataFiles: 'target/jmeter/results/petclinic.csv', errorUnstableThreshold: 0, errorFailedThreshold: 5, errorUnstableResponseTimeThreshold: 'petclinic.jtl:100'
             }
