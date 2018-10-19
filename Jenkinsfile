@@ -85,7 +85,7 @@ pipeline {
         stage('Dependency vulnerability tests') {
             steps {
                 echo "-=- run dependency vulnerability tests -=-"
-                sh "safety check requirements.txt"
+                sh "safety check"
                 //sh "mvn dependency-check:check"
                 //dependencyCheckPublisher failedTotalHigh: '30', unstableTotalHigh: '25', failedTotalNormal: '110', unstableTotalNormal: '100'
             }
