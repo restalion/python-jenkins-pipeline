@@ -71,7 +71,8 @@ pipeline {
                 sh "docker network ls"		
                 sh "ip addr show"		
                 sh "docker network inspect ci"
-                sh "locust -f ./perf_test/locustfile.py --no-web -c 1000 -r 100 --run-time 1m -H python-jenkins-pipeline"
+                sh "ping -c 10 python-jenkins-pipeline"
+                sh "locust -f ./perf_test/locustfile.py --no-web -c 1000 -r 100 --run-time 1m -H python-jenkins-pipeline:5001"
             }
         }
 
