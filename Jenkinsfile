@@ -68,11 +68,7 @@ pipeline {
         stage('Performance tests') {
             steps {
                 echo "-=- execute performance tests -=-"
-                sh "docker network ls"		
-                sh "ip addr show"		
-                sh "docker network inspect ci"
-                sh "ping -c 10 python-jenkins-pipeline"
-                sh "locust -f ./perf_test/locustfile.py --no-web -c 1000 -r 100 --run-time 1m -H http://python-jenkins-pipeline:5001"
+                sh "locust -f ./perf_test/locustfile.py --no-web -c 1000 -r 100 --run-time 1m -H http://172.18.0.3:5001"
             }
         }
 
