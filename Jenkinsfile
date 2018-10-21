@@ -54,7 +54,7 @@ pipeline {
         stage('Run Docker image') {
             steps {
                 echo "-=- run Docker image -=-"
-                sh "docker run --name python-jenkins-pipeline --detach --rm --network ci -p 5001:5000 restalion/python-jenkins-pipeline:0.1"
+                sh "docker run --name python-jenkins-pipeline --detach --network-alias=test-container --rm --network ci -p 5001:5000 restalion/python-jenkins-pipeline:0.1"
             }
         }
 
@@ -68,7 +68,7 @@ pipeline {
         stage('Performance tests') {
             steps {
                 echo "-=- execute performance tests -=-"
-                sh "locust -f ./perf_test/locustfile.py --no-web -c 1000 -r 100 --run-time 1m -H http://python-jenkins-pipeline:5001"
+                sh "locust -f ./perf_test/locustfile.py --no-web -c 1000 -r 100 --run-time 1m -H http://test-container:5001"
             }
         }
 
