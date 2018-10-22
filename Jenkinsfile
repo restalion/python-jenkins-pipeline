@@ -22,7 +22,7 @@ pipeline {
                 sh "ls -la"
                 sh "unzip -u sonar-scanner-cli-3.2.0.1227-linux.zip -d sonar-scanner"
                 sh "ls -la"
-                sh "sed -i -e ''s/#sonar.host.url=http://localhost:9000/sonar.host.url=http://localhost:9000/g'' ./sonar-scanner/sonar-scanner-3.2.0.1227-linux/conf/sonar-scanner.properties"
+                sh 'sed -i -e "s/#sonar.host.url=http://localhost:9000/sonar.host.url=http://localhost:9000/g" ./sonar-scanner/sonar-scanner-3.2.0.1227-linux/conf/sonar-scanner.properties'
                 sh "PATH=$PATH:./sonar-scanner/sonar-scanner-3.2.0.1227-linux/bin"
                 sh "sonar-scanner --help"  
             }
