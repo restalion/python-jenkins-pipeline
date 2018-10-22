@@ -18,7 +18,8 @@ pipeline {
                 sh "pip install -r requirements.txt"
                 sh "wget https://binaries.sonarsource.com/Distribution/sonar-scanner-cli/sonar-scanner-cli-3.2.0.1227-linux.zip"
                 sh "unzip sonar-scanner-cli-3.2.0.1227-linux.zip -d sonar-scanner"
-                sh "sed -i 's/#sonar.host.url=http://localhost:9000/sonar.host.url=http://localhost:9000/g' filename"
+                sh "ls -la"
+                sh "sed -i -e 's/#sonar.host.url=http://localhost:9000/sonar.host.url=http://localhost:9000/g' ./sonar-scanner/conf/sonar-scanner.properties"
                 sh "PATH=$PATH:./sonar-scanner/bin"
                 sh "sonar-scanner --help"  
             }
