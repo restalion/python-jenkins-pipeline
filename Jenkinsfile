@@ -16,6 +16,7 @@ pipeline {
                 sh "apt-get -y install default-jre"
                 sh "apt-get -y install unzip"
                 sh "pip install -r requirements.txt"
+                sh "rm -rf sonar-scanner-cli-3.2.0.1227-linux.*"
                 sh "wget https://binaries.sonarsource.com/Distribution/sonar-scanner-cli/sonar-scanner-cli-3.2.0.1227-linux.zip"
                 sh "ls -la"
                 sh "unzip -u sonar-scanner-cli-3.2.0.1227-linux.zip -d sonar-scanner"
