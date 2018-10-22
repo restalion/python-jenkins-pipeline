@@ -19,10 +19,7 @@ pipeline {
                 sh "rm -rf sonar-scanner-cli-3.2.0.1227-linux.*"
                 sh "rm -rf sonar-scanner"
                 sh "wget https://binaries.sonarsource.com/Distribution/sonar-scanner-cli/sonar-scanner-cli-3.2.0.1227-linux.zip"
-                sh "ls -la"
                 sh "unzip -u sonar-scanner-cli-3.2.0.1227-linux.zip -d sonar-scanner"
-                sh "ls -la"
-                sh "sed -i -e \\'s/#sonar.host.url=http://localhost:9000/sonar.host.url=http://localhost:9000/g\\' ./sonar-scanner/sonar-scanner-3.2.0.1227-linux/conf/sonar-scanner.properties"
                 sh "PATH=$PATH:./sonar-scanner/sonar-scanner-3.2.0.1227-linux/bin"
                 sh "sonar-scanner --help"  
             }
@@ -94,6 +91,7 @@ pipeline {
         stage('Code inspection & quality gate') {
             steps {
                 echo "-=- run code inspection & quality gate -=-"
+                sh "cp ./conf/sonar-scanner.properties ./sonar-scanner/sonar-scanner-3.2.0.1227-linux/conf/sonar-scanner.properties"
                 sh "pylama"
                 sh "sonar-scanner "
             }
