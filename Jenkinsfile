@@ -13,8 +13,8 @@ pipeline {
                 echo "-=- preparing project environment -=-"
                 // Python dependencies
                 sh "apt-get update"
-                sh "apt-get install default-jre"
-                sh "apt-get install unzip"
+                sh "apt-get -y install default-jre"
+                sh "apt-get -y install unzip"
                 sh "pip install -r requirements.txt"
                 sh "wget https://binaries.sonarsource.com/Distribution/sonar-scanner-cli/sonar-scanner-cli-3.2.0.1227-linux.zip"
                 sh "tar xvf sonar-scanner-cli-3.2.0.1227-linux.zip -C sonar-scanner"
