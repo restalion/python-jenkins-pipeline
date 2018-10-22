@@ -13,12 +13,11 @@ pipeline {
                 echo "-=- preparing project environment -=-"
                 // Python dependencies
                 sh "pip install -r requirements.txt"
-                sh "apt-get install unzip"
                 sh "wget https://binaries.sonarsource.com/Distribution/sonar-scanner-cli/sonar-scanner-cli-3.2.0.1227-linux.zip"
-                sh "unzip sonar-scanner-cli-3.2.0.1227-linux.zip -d sonar-scanner"
+                sh "tar xvf sonar-scanner-cli-3.2.0.1227-linux.zip -C sonar-scanner"
                 sh "sed -i 's/#sonar.host.url=http://localhost:9000/sonar.host.url=http://localhost:9000/g' filename"
                 sh "PATH=$PATH:./sonar-scanner/bin"
-                sh "sonar-scanner"  
+                sh "sonar-scanner --help"  
             }
         }
         stage('Compile') {
@@ -89,6 +88,7 @@ pipeline {
             steps {
                 echo "-=- run code inspection & quality gate -=-"
                 sh "pylama"
+                sh "sonar-scanner "
             }
         }
 
