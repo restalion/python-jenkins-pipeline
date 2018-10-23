@@ -12,16 +12,7 @@ pipeline {
             steps {
                 echo "-=- preparing project environment -=-"
                 // Python dependencies
-                sh "apt-get update"
-                sh "apt-get -y install default-jre"
-                sh "apt-get -y install unzip"
                 sh "pip install -r requirements.txt"
-                sh "rm -rf sonar-scanner-cli-3.2.0.1227-linux.*"
-                sh "rm -rf sonar-scanner"
-                sh "wget https://binaries.sonarsource.com/Distribution/sonar-scanner-cli/sonar-scanner-cli-3.2.0.1227-linux.zip"
-                sh "unzip -u sonar-scanner-cli-3.2.0.1227-linux.zip -d sonar-scanner"
-                sh "PATH=$PATH:./sonar-scanner/sonar-scanner-3.2.0.1227-linux/bin"
-                sh "./sonar-scanner/sonar-scanner-3.2.0.1227-linux/bin/sonar-scanner --help"  
             }
         }
         stage('Compile') {
@@ -91,9 +82,7 @@ pipeline {
         stage('Code inspection & quality gate') {
             steps {
                 echo "-=- run code inspection & quality gate -=-"
-                sh "cp ./conf/sonar-scanner.properties ./sonar-scanner/sonar-scanner-3.2.0.1227-linux/conf/sonar-scanner.properties"
                 sh "pylama"
-                sh "./sonar-scanner/sonar-scanner-3.2.0.1227-linux/bin/sonar-scanner "
             }
         }
 
