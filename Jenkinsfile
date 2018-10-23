@@ -21,7 +21,7 @@ pipeline {
                 sh "wget https://binaries.sonarsource.com/Distribution/sonar-scanner-cli/sonar-scanner-cli-3.2.0.1227-linux.zip"
                 sh "unzip -u sonar-scanner-cli-3.2.0.1227-linux.zip -d sonar-scanner"
                 sh "PATH=$PATH:./sonar-scanner/sonar-scanner-3.2.0.1227-linux/bin"
-                sh "sonar-scanner --help"  
+                sh "./sonar-scanner/sonar-scanner-3.2.0.1227-linux/bin/sonar-scanner --help"  
             }
         }
         stage('Compile') {
@@ -93,7 +93,7 @@ pipeline {
                 echo "-=- run code inspection & quality gate -=-"
                 sh "cp ./conf/sonar-scanner.properties ./sonar-scanner/sonar-scanner-3.2.0.1227-linux/conf/sonar-scanner.properties"
                 sh "pylama"
-                sh "sonar-scanner "
+                sh "./sonar-scanner/sonar-scanner-3.2.0.1227-linux/bin/sonar-scanner "
             }
         }
 
