@@ -1,7 +1,3 @@
 Flask
 Flask_Script
 cosmic_ray
-nose
-locustio
-safety
-pylama
