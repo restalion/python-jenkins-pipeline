@@ -1,12 +1,22 @@
+# 项目配置
 module: app
-
 baseline: 10
 
-exclude-modules:
+# 排除模块
+exclude-modules: []
 
+# 测试运行器配置
 test-runner:
   name: unittest
   args: test
 
+# 执行引擎配置
 execution-engine:
   name: local
+  # 可选：并发工作进程数
+  # workers: 4
+
+# 可选：报告配置
+# report:
+#   format: json
+#   output: mutation-report.json
