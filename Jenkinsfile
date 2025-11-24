@@ -51,7 +51,10 @@ pipeline {
             steps {
                 echo "-=- execute mutation tests -=-"
                 // initialize mutation testing session
-                sh "cosmic-ray init config.yml jenkins_session && cosmic-ray --verbose exec jenkins_session && cosmic-ray dump jenkins_session | cr-report"    
+                sh '''
+                . venv/bin/activate
+                cosmic-ray init config.yml jenkins_session && cosmic-ray --verbose exec jenkins_session && cosmic-ray dump jenkins_session | cr-report
+                '''
             }
         }
 
@@ -65,7 +68,10 @@ pipeline {
         stage('Build Docker image') {
             steps {
                 echo "-=- build Docker image -=-"
-                sh "docker build -t restalion/python-jenkins-pipeline:0.1 ."
+                sh '''
+                . venv/bin/activate
+                docker build -t restalion/python-jenkins-pipeline:0.1 .
+                '''
             }
         }
 
@@ -79,28 +85,40 @@ pipeline {
         stage('Integration tests') {
             steps {
                 echo "-=- execute integration tests -=-"
-                sh "nosetests -v int_test"
+                sh '''
+                . venv/bin/activate
+                pytest -v int_test
+                '''
             }
         }
 
         stage('Performance tests') {
             steps {
                 echo "-=- execute performance tests -=-"
-                sh "locust -f ./perf_test/locustfile.py --no-web -c 1000 -r 100 --run-time 1m -H http://172.18.0.3:5001"
+                sh '''
+                . venv/bin/activate
+                locust -f ./perf_test/locustfile.py --no-web -c 1000 -r 100 --run-time 1m -H http://172.18.0.3:5001
+                '''
             }
         }
 
         stage('Dependency vulnerability tests') {
             steps {
                 echo "-=- run dependency vulnerability tests -=-"
-                sh "safety check"
+                sh '''
+                . venv/bin/activate
+                safety check
+                '''
             }
         }
 
         stage('Code inspection & quality gate') {
             steps {
                 echo "-=- run code inspection & quality gate -=-"
-                sh "pylama"
+                sh '''
+                . venv/bin/activate
+                pylama
+                '''
             }
         }
 
