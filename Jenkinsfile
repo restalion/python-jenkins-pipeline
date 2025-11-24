@@ -42,7 +42,7 @@ pipeline {
                 echo "-=- execute unit tests -=-"
                 sh '''
                 . venv/bin/activate
-                nosetests -v test
+                pytest -v test
                 '''
             }
         }
