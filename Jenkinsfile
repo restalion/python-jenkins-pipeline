@@ -9,6 +9,9 @@ pipeline {
                 echo "-=- preparing project environment -=-"
                 // Python dependencies
                 sh '''
+                    # 安装依赖
+                    apt install python3.11-venv
+                
                     # 创建虚拟环境
                     python3 -m venv venv
                     
