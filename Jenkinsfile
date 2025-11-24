@@ -30,14 +30,20 @@ pipeline {
         stage('Compile') {
             steps {
                 echo "-=- compiling project -=-"
-                sh "python -m compileall ."
+                sh '''
+                . venv/bin/activate
+                python -m compileall .
+                '''
             }
         }
 
         stage('Unit tests') {
             steps {
                 echo "-=- execute unit tests -=-"
-                sh "nosetests -v test"
+                sh '''
+                . venv/bin/activate
+                nosetests -v test
+                '''
             }
         }
 
