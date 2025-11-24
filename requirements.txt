@@ -1,7 +1,7 @@
 Flask
 Flask_Script
 cosmic_ray
-nose
+pytest
 locust
 safety
 pylama
