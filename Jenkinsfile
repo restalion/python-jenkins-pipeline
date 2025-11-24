@@ -47,6 +47,30 @@ pipeline {
             }
         }
 
+        stage('Create config') {
+            steps {
+                echo '-=- creating config.yml -=-'
+                sh '''
+                    # 使用 printf 确保没有隐藏字符
+                    printf 'module: app\nbaseline: 10\nexclude-modules: []\ntest-runner:\n  name: unittest\n  args: test\nexecution-engine:\n  name: local\n' > config.yml
+                    
+                    echo "✅ config.yml created"
+                    cat config.yml
+                '''
+            }
+        }
+        
+        stage('Validate config') {
+            steps {
+                echo '-=- validating config.yml -=-'
+                sh '''
+                    . venv/bin/activate
+                    python3 -c "import yaml; config = yaml.safe_load(open('config.yml')); print('✅ Config valid'); print(config)"
+                '''
+            }
+        }
+
+
         stage('Mutation tests') {
             steps {
                 echo "-=- execute mutation tests -=-"
