@@ -8,7 +8,19 @@ pipeline {
             steps {
                 echo "-=- preparing project environment -=-"
                 // Python dependencies
-                sh "pip install -r requirements.txt"
+                sh '''
+                    # 创建虚拟环境
+                    python3 -m venv venv
+                    
+                    # 激活虚拟环境
+                    . venv/bin/activate
+                    
+                    # 升级 pip
+                    pip install --upgrade pip
+                    
+                    # 安装依赖
+                    pip install -r requirements.txt
+                '''
             }
         }
         stage('Compile') {
