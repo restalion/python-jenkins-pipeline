@@ -2,7 +2,7 @@ Flask
 Flask_Script
 cosmic_ray
 nose
-locustio
+locust
 safety
 pylama
 werkzeug>=3.0.1 # not directly required, pinned by Snyk to avoid a vulnerability
