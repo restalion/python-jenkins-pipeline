@@ -16,6 +16,7 @@ pipeline {
         // Docker镜像配置
         IMAGE_NAME = 'python-jenkins-pipeline'
         IMAGE_TAG = 'latest'
+        CONTAINER_NAME= 'jenkins-flask'
     }
 
     stages {
@@ -111,7 +112,7 @@ pipeline {
                 echo "-=- build Docker image -=-"
                 sh '''
                 . venv/bin/activate
-                docker build -t python-jenkins-pipeline:latest .
+                docker build -t ${IMAGE_NAME}:${IMAGE_TAG} .
                 '''
             }
         }
@@ -126,10 +127,10 @@ pipeline {
                         docker network create ci
                         echo "✅ Network 'ci' created successfully"
                     fi
-                    if docker ps -a | grep python-jenkins-pipeline > /dev/null 2>&1; then
-                        echo "python-jenkins-pipeline already exists, will remove it"
-                        docker stop python-jenkins-pipeline
-                        docker rm python-jenkins-pipeline
+                    if docker ps -a | grep ${CONTAINER_NAME} > /dev/null 2>&1; then
+                        echo "${CONTAINER_NAME} already exists, will remove it"
+                        docker stop ${CONTAINER_NAME}
+                        docker rm ${CONTAINER_NAME}
                     fi
                     
                 '''
@@ -140,7 +141,7 @@ pipeline {
         stage('Run Docker image') {
             steps {
                 echo "-=- run Docker image -=-"
-                sh "docker run --name python-jenkins-pipeline --detach --rm --network ci -p 5001:5000 python-jenkins-pipeline:latest"
+                sh "docker run --name ${CONTAINER_NAME} --detach --rm --network ci -p 5001:5000 ${IMAGE_NAME}:${IMAGE_TAG}"
             }
         }
 
@@ -176,12 +177,12 @@ pipeline {
 
         stage('Push Docker image') {
             steps {
-                echo "-=- push Docker image -=-"
-                withDockerRegistry([ credentialsId: "werdar-wedartg-uiny67-adsuja0-12njkn3", url: "" ]) {
-                    sh "docker push python-jenkins-pipeline:latest"
+                echo "-=- push Docker image to hub -=-"
+                script {
+                    docker.withRegistry('ph-sw-cn-beijing.cr.volces.com', 'crrobot_for_jenkins') {
+                        docker.image("jenkins/${IMAGE_NAME}:${IMAGE_TAG}").push()
+                    }
                 }
-                
-                //sh "mvn docker:push"
             }
         }
     }
@@ -189,7 +190,7 @@ pipeline {
     post {
         always {
             echo "-=- remove deployment -=-"
-            sh "docker stop python-jenkins-pipeline"
+            sh "docker stop ${CONTAINER_NAME}"
         }
     }
 }
