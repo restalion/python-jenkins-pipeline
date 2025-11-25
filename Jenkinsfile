@@ -110,6 +110,21 @@ pipeline {
             }
         }
 
+        stage('Create Docker network') {
+            steps {
+                echo "-=- create Docker network -=-"
+                sh '''
+                    if docker network inspect ci > /dev/null 2>&1; then
+                        echo "✅ Network 'ci' already exists"
+                    else
+                        docker network create ci
+                        echo "✅ Network 'ci' created successfully"
+                    fi
+                '''
+            }
+        }
+        
+
         stage('Run Docker image') {
             steps {
                 echo "-=- run Docker image -=-"
