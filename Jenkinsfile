@@ -170,7 +170,7 @@ pipeline {
                 echo "-=- run dependency vulnerability tests -=-"
                 sh '''
                 . venv/bin/activate
-                safety scan
+                safety check
                 '''
             }
         }
