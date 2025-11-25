@@ -1,4 +1,4 @@
-FROM python:3.11
+FROM alibaba-cloud-linux-3-registry.cn-hangzhou.cr.aliyuncs.com/alinux3/python:3.11.1
 
 # copy all files
 RUN mkdir hello
@@ -11,4 +11,4 @@ RUN pip install Flask_Script
 
 EXPOSE 5000
 
-CMD ["python", "run.py"]
+CMD ["python3", "run.py"]
