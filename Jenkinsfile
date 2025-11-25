@@ -3,6 +3,17 @@
 pipeline {
     agent any
 
+    environment {
+        // 代理配置（如需要）
+        HTTPS_PROXY = 'http://100.68.169.226:3128'
+        HTTP_PROXY = 'http://100.68.169.226:3128'
+        NO_PROXY = '10.19.49.248,*.ivolces.com,*.volces.com'
+        
+        // Python 配置
+        VENV_DIR = "${WORKSPACE}/venv"
+        PYTHON_VERSION = 'python3'
+    }
+
     stages {
         stage('Environment preparation') {
             steps {
