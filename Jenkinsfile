@@ -78,7 +78,7 @@ pipeline {
                 sh '''
                 . venv/bin/activate
                 '''
-                # cosmic-ray init config.yml jenkins_session && cosmic-ray --verbose exec jenkins_session && cosmic-ray dump jenkins_session | cr-report
+                // cosmic-ray init config.yml jenkins_session && cosmic-ray --verbose exec jenkins_session && cosmic-ray dump jenkins_session | cr-report
             }
         }
 
