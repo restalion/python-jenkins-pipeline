@@ -20,6 +20,8 @@ pipeline {
                 echo "-=- preparing project environment -=-"
                 // Python dependencies
                 sh '''
+                    export no_proxy=*.ivolces.com,*.volces.com
+                    
                     # 安装依赖
                     apt-get update
                     apt-get install -y python3.11-venv
