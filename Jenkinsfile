@@ -105,7 +105,7 @@ pipeline {
                 echo "-=- build Docker image -=-"
                 sh '''
                 . venv/bin/activate
-                docker build -t restalion/python-jenkins-pipeline:0.1 .
+                docker build -t python-jenkins-pipeline:v1 .
                 '''
             }
         }
@@ -113,7 +113,7 @@ pipeline {
         stage('Run Docker image') {
             steps {
                 echo "-=- run Docker image -=-"
-                sh "docker run --name python-jenkins-pipeline --detach --rm --network ci -p 5001:5000 restalion/python-jenkins-pipeline:0.1"
+                sh "docker run --name python-jenkins-pipeline --detach --rm --network ci -p 5001:5000 python-jenkins-pipeline:v1"
             }
         }
 
