@@ -1,0 +1,328 @@
+#!groovy
+
+pipeline {
+    agent any
+
+    environment {
+        // 代理配置
+        HTTPS_PROXY = 'http://100.68.169.226:3128'
+        HTTP_PROXY = 'http://100.68.169.226:3128'
+        NO_PROXY = '*.ivolces.com,*.volces.com,localhost,127.0.0.1'
+        
+        // Go 配置
+        GO_VERSION = '1.21'
+        GOPATH = "${WORKSPACE}/go"
+        GOBIN = "${GOPATH}/bin"
+        PATH = "${GOBIN}:${PATH}"
+        
+        // 项目配置
+        PROJECT_NAME = 'go-jenkins-pipeline'
+        APP_NAME = 'app'
+        BUILD_DIR = "${WORKSPACE}/build"
+        
+        // Docker 镜像配置
+        IMAGE_NAME = 'go-jenkins-pipeline'
+        IMAGE_TAG = 'latest'
+        CONTAINER_NAME = 'jenkins-go-app'
+        REGISTRY = 'ph-sw-cn-beijing.cr.volces.com'
+        REGISTRY_NAMESPACE = 'jenkins'
+    }
+
+    options {
+        timeout(time: 30, unit: 'MINUTES')
+        timestamps()
+        buildDiscarder(logRotator(numToKeepStr: '10'))
+    }
+
+    stages {
+        stage('Environment preparation') {
+            steps {
+                echo "-=- preparing project environment -=-"
+                sh '''
+                    set -e
+                    
+                    # 显示 Go 版本
+                    go version
+                    
+                    # 创建必要的目录
+                    mkdir -p ${BUILD_DIR}
+                    
+                    # 下载依赖
+                    echo "Downloading Go dependencies..."
+                    go mod download
+                    go mod verify
+                    
+                    # 安装工具
+                    echo "Installing tools..."
+                    go install github.com/golangci/golangci-lint/cmd/golangci-lint@latest
+                    go install gotest.tools/gotestsum@latest
+                    
+                    echo "✅ Environment preparation completed"
+                '''
+            }
+        }
+
+        stage('Code quality analysis') {
+            steps {
+                echo "-=- running code quality analysis -=-"
+                sh '''
+                    set -e
+                    
+                    # 运行 golangci-lint
+                    echo "Running golangci-lint..."
+                    golangci-lint run ./... \
+                      --timeout=5m \
+                      --out-format=json > ${BUILD_DIR}/lint-report.json || true
+                    
+                    # 显示摘要
+                    echo "✅ Code quality analysis completed"
+                '''
+            }
+            post {
+                always {
+                    archiveArtifacts artifacts: '${BUILD_DIR}/lint-report.json', allowEmptyArchive: true
+                }
+            }
+        }
+
+        stage('Compile') {
+            steps {
+                echo "-=- compiling project -=-"
+                sh '''
+                    set -e
+                    
+                    # 编译应用
+                    echo "Building application..."
+                    go build \
+                      -o ${BUILD_DIR}/${APP_NAME} \
+                      -ldflags="-X main.Version=${BUILD_NUMBER} -X main.BuildTime=$(date -u '+%Y-%m-%d %H:%M:%S')" \
+                      ./cmd/main.go
+                    
+                    # 验证二进制文件
+                    if [ -f ${BUILD_DIR}/${APP_NAME} ]; then
+                        echo "✅ Build successful"
+                        ls -lh ${BUILD_DIR}/${APP_NAME}
+                    else
+                        echo "❌ Build failed"
+                        exit 1
+                    fi
+                '''
+            }
+        }
+
+        stage('Unit tests') {
+            steps {
+                echo "-=- execute unit tests -=-"
+                sh '''
+                    set -e
+                    
+                    echo "Running unit tests..."
+                    go test -v -race -coverprofile=${BUILD_DIR}/coverage.out ./...
+                    
+                    # 生成覆盖率报告
+                    go tool cover -html=${BUILD_DIR}/coverage.out -o ${BUILD_DIR}/coverage.html
+                    
+                    # 显示覆盖率
+                    echo "Coverage report:"
+                    go tool cover -func=${BUILD_DIR}/coverage.out
+                    
+                    echo "✅ Unit tests completed"
+                '''
+            }
+            post {
+                always {
+                    archiveArtifacts artifacts: '${BUILD_DIR}/coverage.*', allowEmptyArchive: true
+                    publishHTML([
+                        reportDir: '${BUILD_DIR}',
+                        reportFiles: 'coverage.html',
+                        reportName: 'Go Coverage Report'
+                    ])
+                }
+            }
+        }
+
+        stage('Integration tests') {
+            steps {
+                echo "-=- execute integration tests -=-"
+                sh '''
+                    set -e
+                    
+                    echo "Running integration tests..."
+                    go test -v -tags=integration ./int_test/...
+                    
+                    echo "✅ Integration tests completed"
+                '''
+            }
+        }
+
+        stage('Dependency vulnerability tests') {
+            steps {
+                echo "-=- run dependency vulnerability tests -=-"
+                sh '''
+                    set -e
+                    
+                    # 安装 nancy（Go 依赖漏洞扫描工具）
+                    go install github.com/sonatype-nexus-community/nancy@latest
+                    
+                    # 运行漏洞扫描
+                    echo "Scanning for vulnerabilities..."
+                    go list -json -m all | nancy sleuth -o json > ${BUILD_DIR}/vulnerability-report.json || true
+                    
+                    # 显示结果
+                    echo "✅ Vulnerability scan completed"
+                '''
+            }
+            post {
+                always {
+                    archiveArtifacts artifacts: '${BUILD_DIR}/vulnerability-report.json', allowEmptyArchive: true
+                }
+            }
+        }
+
+        stage('Build Docker image') {
+            steps {
+                echo "-=- build Docker image -=-"
+                sh '''
+                    set -e
+                    
+                    # 构建 Docker 镜像
+                    docker build \
+                      -t ${IMAGE_NAME}:${IMAGE_TAG} \
+                      -t ${IMAGE_NAME}:${BUILD_NUMBER} \
+                      --build-arg BUILD_TIME=$(date -u '+%Y-%m-%d %H:%M:%S') \
+                      --build-arg VERSION=${BUILD_NUMBER} \
+                      .
+                    
+                    echo "✅ Docker image built successfully"
+                    docker images | grep ${IMAGE_NAME}
+                '''
+            }
+        }
+
+        stage('Create Docker network & Remove existing container') {
+            steps {
+                echo "-=- create Docker network -=-"
+                sh '''
+                    set -e
+                    
+                    # 创建网络
+                    if docker network inspect ci > /dev/null 2>&1; then
+                        echo "✅ Network 'ci' already exists"
+                    else
+                        docker network create ci
+                        echo "✅ Network 'ci' created successfully"
+                    fi
+                    
+                    # 移除旧容器
+                    if docker ps -a | grep ${CONTAINER_NAME} > /dev/null 2>&1; then
+                        echo "Removing existing container ${CONTAINER_NAME}..."
+                        docker stop ${CONTAINER_NAME} 2>/dev/null || true
+                        docker rm ${CONTAINER_NAME} 2>/dev/null || true
+                    fi
+                    
+                    echo "✅ Cleanup completed"
+                '''
+            }
+        }
+
+        stage('Run Docker container') {
+            steps {
+                echo "-=- run Docker container -=-"
+                sh '''
+                    set -e
+                    
+                    # 运行容器
+                    docker run \
+                      --name ${CONTAINER_NAME} \
+                      --detach \
+                      --rm \
+                      --network ci \
+                      -p 8080:8080 \
+                      -e ENVIRONMENT=test \
+                      ${IMAGE_NAME}:${IMAGE_TAG}
+                    
+                    # 等待服务启动
+                    echo "Waiting for service to start..."
+                    for i in {1..30}; do
+                        if curl -s http://localhost:8080/health > /dev/null 2>&1; then
+                            echo "✅ Service is ready"
+                            break
+                        fi
+                        echo "Waiting... ($i/30)"
+                        sleep 2
+                    done
+                    
+                    # 显示容器信息
+                    docker ps | grep ${CONTAINER_NAME}
+                '''
+            }
+        }
+
+        stage('Performance tests') {
+            steps {
+                echo "-=- execute performance tests -=-"
+                sh '''
+                    set -e
+                    
+                    # 安装 hey（HTTP 性能测试工具）
+                    go install github.com/rakyll/hey@latest
+                    
+                    # 运行性能测试
+                    echo "Running performance tests..."
+                    hey -n 1000 -c 100 -o ${BUILD_DIR}/performance-report.txt http://localhost:8080/
+                    
+                    echo "✅ Performance tests completed"
+                '''
+            }
+            post {
+                always {
+                    archiveArtifacts artifacts: '${BUILD_DIR}/performance-report.txt', allowEmptyArchive: true
+                }
+            }
+        }
+
+        stage('Push Docker image') {
+            steps {
+                echo "-=- push Docker image to registry -=-"
+                script {
+                    docker.withRegistry("https://${REGISTRY}", 'crrobot_for_jenkins') {
+                        sh '''
+                            set -e
+                            
+                            # 标记镜像
+                            docker tag ${IMAGE_NAME}:${IMAGE_TAG} ${REGISTRY}/${REGISTRY_NAMESPACE}/${IMAGE_NAME}:${IMAGE_TAG}
+                            docker tag ${IMAGE_NAME}:${BUILD_NUMBER} ${REGISTRY}/${REGISTRY_NAMESPACE}/${IMAGE_NAME}:${BUILD_NUMBER}
+                            
+                            # 推送镜像
+                            docker push ${REGISTRY}/${REGISTRY_NAMESPACE}/${IMAGE_NAME}:${IMAGE_TAG}
+                            docker push ${REGISTRY}/${REGISTRY_NAMESPACE}/${IMAGE_NAME}:${BUILD_NUMBER}
+                            
+                            echo "✅ Docker image pushed successfully"
+                        '''
+                    }
+                }
+            }
+        }
+    }
+
+    post {
+        always {
+            echo "-=- cleanup -=-"
+            sh '''
+                # 停止容器
+                docker stop ${CONTAINER_NAME} 2>/dev/null || true
+                
+                # 清理临时文件
+                rm -rf ${GOPATH}
+                
+                echo "✅ Cleanup completed"
+            '''
+        }
+        success {
+            echo "✅ Pipeline succeeded"
+        }
+        failure {
+            echo "❌ Pipeline failed"
+        }
+    }
+}
