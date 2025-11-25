@@ -179,7 +179,7 @@ pipeline {
             steps {
                 echo "-=- push Docker image to hub -=-"
                 script {
-                    docker.withRegistry('ph-sw-cn-beijing.cr.volces.com', 'crrobot_for_jenkins') {
+                    docker.withRegistry('https://ph-sw-cn-beijing.cr.volces.com', 'crrobot_for_jenkins') {
                         docker.image("jenkins/${IMAGE_NAME}:${IMAGE_TAG}").push()
                     }
                 }
