@@ -14,6 +14,8 @@ pipeline {
         PYTHON_VERSION = 'python3'
 
         // Docker镜像配置
+        REGISTRY = 'https://ph-sw-cn-beijing.cr.volces.com'
+        REGISTRY_NAMESPACE = 'jenkins'
         IMAGE_NAME = 'python-jenkins-pipeline'
         IMAGE_TAG = 'latest'
         CONTAINER_NAME= 'jenkins-flask'
@@ -179,8 +181,18 @@ pipeline {
             steps {
                 echo "-=- push Docker image to hub -=-"
                 script {
-                    docker.withRegistry('https://ph-sw-cn-beijing.cr.volces.com', 'crrobot_for_jenkins') {
-                        docker.image("jenkins/${IMAGE_NAME}:${IMAGE_TAG}").push()
+                    docker.withRegistry('${REGISTRY}', 'crrobot_for_jenkins') {
+                        sh '''
+                            set -e
+                            
+                            # 标记镜像
+                            docker tag ${IMAGE_NAME}:${IMAGE_TAG} ${REGISTRY}/${REGISTRY_NAMESPACE}/${IMAGE_NAME}:${IMAGE_TAG}
+                            
+                            # 推送镜像
+                            docker push ${REGISTRY}/${REGISTRY_NAMESPACE}/${IMAGE_NAME}:${IMAGE_TAG}
+                            
+                            echo "✅ Docker image pushed successfully"
+                        '''
                     }
                 }
             }
