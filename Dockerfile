@@ -8,7 +8,10 @@ WORKDIR /hello
 # install required libraries
 RUN pip install Flask
 RUN pip install Flask_Script
+RUN python -m pip install --upgrade pip
 
 EXPOSE 5000
+
+ENV TZ Asia/Shanghai
 
 CMD ["python3", "run.py"]
