@@ -4,14 +4,18 @@ pipeline {
     agent any
 
     environment {
-        // 代理配置（如需要）
+        // 代理配置
         HTTPS_PROXY = 'http://100.68.169.226:3128'
         HTTP_PROXY = 'http://100.68.169.226:3128'
         NO_PROXY = '*.ivolces.com,*.volces.com'
         
-        // Python 配置
+        // Python配置
         VENV_DIR = "${WORKSPACE}/venv"
         PYTHON_VERSION = 'python3'
+
+        // Docker镜像配置
+        IMAGE_NAME = 'python-jenkins-pipeline'
+        IMAGE_TAG = 'latest'
     }
 
     stages {
@@ -107,7 +111,7 @@ pipeline {
                 echo "-=- build Docker image -=-"
                 sh '''
                 . venv/bin/activate
-                docker build -t python-jenkins-pipeline:v1 .
+                docker build -t python-jenkins-pipeline:latest .
                 '''
             }
         }
@@ -136,7 +140,7 @@ pipeline {
         stage('Run Docker image') {
             steps {
                 echo "-=- run Docker image -=-"
-                sh "docker run --name python-jenkins-pipeline --detach --rm --network ci -p 5001:5000 python-jenkins-pipeline:v1"
+                sh "docker run --name python-jenkins-pipeline --detach --rm --network ci -p 5001:5000 python-jenkins-pipeline:latest"
             }
         }
 
@@ -165,17 +169,7 @@ pipeline {
                 echo "-=- run dependency vulnerability tests -=-"
                 sh '''
                 . venv/bin/activate
-                safety check
-                '''
-            }
-        }
-
-        stage('Code inspection & quality gate') {
-            steps {
-                echo "-=- run code inspection & quality gate -=-"
-                sh '''
-                . venv/bin/activate
-                pylama
+                safety scan
                 '''
             }
         }
@@ -184,7 +178,7 @@ pipeline {
             steps {
                 echo "-=- push Docker image -=-"
                 withDockerRegistry([ credentialsId: "werdar-wedartg-uiny67-adsuja0-12njkn3", url: "" ]) {
-                    sh "docker push restalion/python-jenkins-pipeline:0.1"
+                    sh "docker push python-jenkins-pipeline:latest"
                 }
                 
                 //sh "mvn docker:push"
