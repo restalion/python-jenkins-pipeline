@@ -110,7 +110,7 @@ pipeline {
             }
         }
 
-        stage('Create Docker network') {
+        stage('Create Docker network & Remove existing container') {
             steps {
                 echo "-=- create Docker network -=-"
                 sh '''
@@ -120,6 +120,12 @@ pipeline {
                         docker network create ci
                         echo "✅ Network 'ci' created successfully"
                     fi
+                    if docker ps -a | grep python-jenkins-pipeline > /dev/null 2>&1; then
+                        echo "python-jenkins-pipeline already exists, will remove it"
+                        docker stop python-jenkins-pipeline
+                        docker rm python-jenkins-pipeline
+                    fi
+                    
                 '''
             }
         }
