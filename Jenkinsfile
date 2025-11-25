@@ -181,7 +181,7 @@ pipeline {
             steps {
                 echo "-=- push Docker image to hub -=-"
                 script {
-                    docker.withRegistry('${REGISTRY}', 'crrobot_for_jenkins') {
+                    docker.withRegistry("${REGISTRY}", 'crrobot_for_jenkins') {
                         sh '''
                             set -e
                             
