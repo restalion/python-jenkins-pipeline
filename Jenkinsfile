@@ -15,6 +15,7 @@ pipeline {
 
         // Docker镜像配置
         REGISTRY = 'ph-sw-cn-beijing.cr.volces.com'
+        REGISTRY_HTTPS = 'https://ph-sw-cn-beijing.cr.volces.com'
         REGISTRY_NAMESPACE = 'jenkins'
         IMAGE_NAME = 'python-jenkins-pipeline'
         IMAGE_TAG = 'latest'
@@ -181,7 +182,7 @@ pipeline {
             steps {
                 echo "-=- push Docker image to hub -=-"
                 script {
-                    docker.withRegistry("${REGISTRY}", 'crrobot_for_jenkins') {
+                    docker.withRegistry("${REGISTRY_HTTPS}", 'crrobot_for_jenkins') {
                         sh '''
                             set -e
                             
