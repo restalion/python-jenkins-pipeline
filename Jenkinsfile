@@ -40,10 +40,10 @@ pipeline {
                     . venv/bin/activate
                     
                     # 升级 pip
-                    pip install --upgrade pip
+                    pip install --upgrade pip -i https://mirrors.aliyun.com/pypi/simple/
                     
                     # 安装依赖
-                    pip install -r requirements.txt
+                    pip install -r requirements.txt -i https://mirrors.aliyun.com/pypi/simple/
                 '''
             }
         }
