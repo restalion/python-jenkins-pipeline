@@ -14,7 +14,7 @@ pipeline {
         PYTHON_VERSION = 'python3'
 
         // Docker镜像配置
-        REGISTRY = 'https://ph-sw-cn-beijing.cr.volces.com'
+        REGISTRY = 'ph-sw-cn-beijing.cr.volces.com'
         REGISTRY_NAMESPACE = 'jenkins'
         IMAGE_NAME = 'python-jenkins-pipeline'
         IMAGE_TAG = 'latest'
