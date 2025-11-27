@@ -7,5 +7,12 @@ safety
 pylama
 PyYAML
 werkzeug>=3.0.1 # not directly required, pinned by Snyk to avoid a vulnerability
-setuptools>=65.5.1 # not directly required, pinned by Snyk to avoid a vulnerability
+setuptools>=70.0.0 # not directly required, pinned by Snyk to avoid a vulnerability
 wheel>=0.38.0 # not directly required, pinned by Snyk to avoid a vulnerability
+gevent>=23.9.0 # not directly required, pinned by Snyk to avoid a vulnerability
+authlib>=1.3.1 # not directly required, pinned by Snyk to avoid a vulnerability
+flask-cors>=6.0.0 # not directly required, pinned by Snyk to avoid a vulnerability
+aiohttp>=3.9.0 # not directly required, pinned by Snyk to avoid a vulnerability
+zipp>=3.19.1 # not directly required, pinned by Snyk to avoid a vulnerability
+urllib3>=1.26.19 # not directly required, pinned by Snyk to avoid a vulnerability
+requests>=2.32.2 # not directly required, pinned by Snyk to avoid a vulnerability
